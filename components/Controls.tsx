@@ -1,6 +1,6 @@
 import React from 'react';
 import { DrawingOptions, ToolType } from '../types';
-import { RefreshCw, Download, Play, Type, PenTool, Shuffle, Palette, Pencil, Brush } from 'lucide-react';
+import { RefreshCw, Download, Play, Type, PenTool, Shuffle, Palette, Pencil, Brush, ChevronDown } from 'lucide-react';
 
 interface ControlsProps {
   options: DrawingOptions;
@@ -12,6 +12,7 @@ interface ControlsProps {
   currentFontName?: string;
   mode: 'draw' | 'type';
   setMode: (mode: 'draw' | 'type') => void;
+  onClose?: () => void;
 }
 
 const Controls: React.FC<ControlsProps> = ({ 
@@ -23,7 +24,8 @@ const Controls: React.FC<ControlsProps> = ({
   onRegenerateStyle,
   currentFontName,
   mode,
-  setMode
+  setMode,
+  onClose
 }) => {
   
   const tools: { id: ToolType; label: string; icon: React.ReactNode }[] = [
@@ -33,10 +35,21 @@ const Controls: React.FC<ControlsProps> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-6 bg-white border-l border-gray-200 p-6 w-full md:w-80 h-full overflow-y-auto">
+    <div className="flex flex-col gap-6 bg-white md:bg-transparent p-6 w-full h-full overflow-y-auto">
       
+      {/* Mobile Handle / Header */}
+      <div className="flex md:hidden items-center justify-between mb-2">
+          <h3 className="font-semibold text-gray-800">Settings</h3>
+          <button 
+            onClick={onClose}
+            className="p-1 rounded-full hover:bg-gray-100 text-gray-500"
+          >
+              <ChevronDown size={24} />
+          </button>
+      </div>
+
       {/* Mode Switcher */}
-      <div className="flex bg-gray-100 p-1 rounded-lg">
+      <div className="flex bg-gray-100 p-1 rounded-lg shrink-0">
         <button
           onClick={() => setMode('draw')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-all ${
@@ -80,7 +93,7 @@ const Controls: React.FC<ControlsProps> = ({
           </div>
       )}
 
-      {/* Style Controls - Visible in both modes now for specific properties */}
+      {/* Style Controls */}
       <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
           <div>
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 block">
@@ -96,7 +109,7 @@ const Controls: React.FC<ControlsProps> = ({
                 <input
                   type="range"
                   min="0.5" // Allow thinner text
-                  max={mode === 'draw' ? "10" : "5"} // Limit text stroke to avoid blobs
+                  max={mode === 'draw' ? "10" : "5"} 
                   step="0.1"
                   value={options.maxWidth}
                   onChange={(e) => onChange({ ...options, maxWidth: parseFloat(e.target.value) })}

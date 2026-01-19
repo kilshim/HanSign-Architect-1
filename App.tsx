@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import SignaturePad, { SignaturePadHandle } from './components/SignaturePad';
 import Controls from './components/Controls';
 import { DrawingOptions, DrawingMode } from './types';
-import { Info, AlertCircle } from 'lucide-react';
+import { Info, AlertCircle, Settings2 } from 'lucide-react';
 
 interface FontDef {
     name: string;
@@ -55,6 +55,7 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<DrawingMode>('draw');
   const [textSignature, setTextSignature] = useState('');
   const [currentFontIndex, setCurrentFontIndex] = useState(0);
+  const [showMobileControls, setShowMobileControls] = useState(false);
   
   const [options, setOptions] = useState<DrawingOptions>({
     color: '#000000',
@@ -180,11 +181,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50 text-gray-900 font-sans">
+    <div className="h-screen w-screen flex flex-col bg-gray-50 text-gray-900 font-sans overflow-hidden">
       {/* Header */}
-      <header className="flex-none h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between z-10">
+      <header className="flex-none h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between z-10 shadow-sm md:shadow-none">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-brand-500/20 shadow-lg">
             서
           </div>
           <h1 className="text-xl font-bold tracking-tight text-gray-900">HanSign <span className="text-gray-400 font-normal">Architect</span></h1>
@@ -195,9 +196,9 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Workspace */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+      <main className="flex-1 flex flex-col md:flex-row relative overflow-hidden">
         
-        {/* Canvas Area */}
+        {/* Canvas Area - Always Visible */}
         <div className="flex-1 relative bg-slate-100 flex items-center justify-center p-4 md:p-8 overflow-hidden">
             
             {/* Background Pattern */}
@@ -218,25 +219,21 @@ const App: React.FC = () => {
                     </>
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center p-8">
-                        {/* Text Preview Wrapper to handle stroke simulation via CSS text-stroke or SVG filter would be ideal, 
-                            but for simple Preview we use text-shadow or -webkit-text-stroke */}
                         <div style={{ position: 'relative' }}>
                             <input 
                                 type="text" 
                                 value={textSignature}
                                 onChange={(e) => setTextSignature(e.target.value)}
-                                placeholder="Type Name (English for Cursive)"
+                                placeholder="Type Name"
                                 className="w-full max-w-2xl bg-transparent border-b-2 border-gray-200 text-center text-5xl md:text-7xl focus:border-brand-500 focus:outline-none placeholder-gray-300 transition-colors py-8 mb-4 relative z-10"
                                 style={{ 
                                     color: options.color,
                                     fontFamily: currentFont.family,
                                     lineHeight: 1.5,
-                                    // Simulate bold using text-shadow for preview (Cross-browser safe-ish)
                                     textShadow: options.maxWidth > 1.5 
                                         ? `0 0 ${options.maxWidth - 1}px ${options.color}` 
                                         : 'none'
                                 }}
-                                autoFocus
                             />
                         </div>
 
@@ -245,26 +242,36 @@ const App: React.FC = () => {
                                 <Info size={14} />
                                 <span>Current Style: <strong>{currentFont.name}</strong></span>
                             </div>
-                            
-                            {!isKorean && textSignature.length > 0 && (
-                                <span className="text-xs text-brand-600 animate-pulse">
-                                    ✨ Tip: English text enables connected cursive styles!
-                                </span>
-                            )}
-                            {isKorean && currentFont.lang === 'en' && (
-                                <div className="flex items-center gap-1 text-amber-600 text-xs">
-                                    <AlertCircle size={12} />
-                                    <span>This font only supports English</span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* Mobile Settings Toggle FAB */}
+            <button
+                onClick={() => setShowMobileControls(true)}
+                className="md:hidden absolute bottom-6 right-6 z-20 w-12 h-12 bg-white text-gray-700 rounded-full shadow-lg flex items-center justify-center border border-gray-200 active:scale-95 transition-transform hover:text-brand-600"
+                aria-label="Open Settings"
+            >
+                <Settings2 size={24} />
+            </button>
         </div>
 
-        {/* Sidebar Controls */}
-        <div className="flex-none h-1/3 md:h-full w-full md:w-80 relative z-20 shadow-xl">
+        {/* Backdrop for mobile */}
+        {showMobileControls && (
+            <div 
+                className="fixed inset-0 bg-black/20 z-30 md:hidden backdrop-blur-[1px] transition-opacity"
+                onClick={() => setShowMobileControls(false)}
+            />
+        )}
+
+        {/* Sidebar Controls - Drawer on Mobile, Sidebar on Desktop */}
+        <div className={`
+            fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-2xl shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] 
+            transition-transform duration-300 ease-out border-t border-gray-100
+            h-[65vh] md:h-full md:w-80 md:static md:translate-y-0 md:rounded-none md:border-t-0 md:border-l md:shadow-xl
+            ${showMobileControls ? 'translate-y-0' : 'translate-y-full'}
+        `}>
              <Controls 
                 options={options} 
                 onChange={setOptions} 
@@ -275,12 +282,13 @@ const App: React.FC = () => {
                 currentFontName={currentFont.name}
                 mode={mode}
                 setMode={setMode}
+                onClose={() => setShowMobileControls(false)}
              />
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="flex-none bg-white border-t border-gray-200 py-2 flex items-center justify-center z-10">
+      {/* Footer - Hidden on mobile if controls are open to save space, or keep it simple */}
+      <footer className="hidden md:flex flex-none bg-white border-t border-gray-200 py-2 items-center justify-center z-10">
         <a 
             href="https://xn--design-hl6wo12cquiba7767a.com/" 
             target="_blank" 
