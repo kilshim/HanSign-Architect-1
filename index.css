@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f8fafc;
+  overflow: hidden; /* Prevent pull-to-refresh on mobile */
+  touch-action: none;
+}
