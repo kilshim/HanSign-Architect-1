@@ -1,13 +1,11 @@
 import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Point, Stroke, DrawingOptions } from '../types';
-import { getDistance, getVelocity, lerp, getMidPoint } from '../utils/geometry';
+import { getDistance, lerp, getMidPoint } from '../utils/geometry';
 
 interface SignaturePadProps {
   options: DrawingOptions;
   onInteractStart?: () => void;
   onInteractEnd?: () => void;
-  width?: number;
-  height?: number;
 }
 
 export interface SignaturePadHandle {
@@ -17,7 +15,7 @@ export interface SignaturePadHandle {
   isEmpty: () => boolean;
 }
 
-const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(({ options, onInteractStart, onInteractEnd, width, height }, ref) => {
+const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>(({ options, onInteractStart, onInteractEnd }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
