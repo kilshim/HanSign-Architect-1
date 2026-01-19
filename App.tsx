@@ -247,10 +247,10 @@ const App: React.FC = () => {
                 )}
             </div>
 
-            {/* Mobile Settings Toggle FAB */}
+            {/* Mobile Settings Toggle FAB - Moved to Top Right */}
             <button
                 onClick={() => setShowMobileControls(true)}
-                className="md:hidden absolute bottom-6 right-6 z-20 w-12 h-12 bg-white text-gray-700 rounded-full shadow-lg flex items-center justify-center border border-gray-200 active:scale-95 transition-transform hover:text-brand-600"
+                className="md:hidden absolute top-4 right-4 z-20 w-12 h-12 bg-white text-gray-700 rounded-full shadow-lg flex items-center justify-center border border-gray-200 active:scale-95 transition-transform hover:text-brand-600"
                 aria-label="Open Settings"
             >
                 <Settings2 size={24} />
@@ -265,12 +265,13 @@ const App: React.FC = () => {
             />
         )}
 
-        {/* Sidebar Controls - Drawer on Mobile, Sidebar on Desktop */}
+        {/* Sidebar Controls - Side Drawer on Mobile (from right), Sidebar on Desktop */}
         <div className={`
-            fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-2xl shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] 
-            transition-transform duration-300 ease-out border-t border-gray-100
-            h-[65vh] md:h-full md:w-80 md:static md:translate-y-0 md:rounded-none md:border-t-0 md:border-l md:shadow-xl
-            ${showMobileControls ? 'translate-y-0' : 'translate-y-full'}
+            fixed top-0 right-0 h-full z-40 bg-white shadow-2xl 
+            transition-transform duration-300 ease-out border-l border-gray-100
+            w-80 max-w-[85vw]
+            md:static md:translate-x-0 md:shadow-xl
+            ${showMobileControls ? 'translate-x-0' : 'translate-x-full'}
         `}>
              <Controls 
                 options={options} 
@@ -287,8 +288,8 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer - Hidden on mobile if controls are open to save space, or keep it simple */}
-      <footer className="hidden md:flex flex-none bg-white border-t border-gray-200 py-2 items-center justify-center z-10">
+      {/* Footer - Visible on all devices now */}
+      <footer className="flex flex-none bg-white border-t border-gray-200 py-2 items-center justify-center z-10">
         <a 
             href="https://xn--design-hl6wo12cquiba7767a.com/" 
             target="_blank" 

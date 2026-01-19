@@ -1,6 +1,6 @@
 import React from 'react';
 import { DrawingOptions, ToolType } from '../types';
-import { RefreshCw, Download, Play, Type, PenTool, Shuffle, Palette, Pencil, Brush, ChevronDown } from 'lucide-react';
+import { RefreshCw, Download, Play, Type, PenTool, Shuffle, Palette, Pencil, Brush, X } from 'lucide-react';
 
 interface ControlsProps {
   options: DrawingOptions;
@@ -20,7 +20,7 @@ const Controls: React.FC<ControlsProps> = ({
   onChange, 
   onClear, 
   onReplay, 
-  onDownload,
+  onDownload, 
   onRegenerateStyle,
   currentFontName,
   mode,
@@ -39,12 +39,12 @@ const Controls: React.FC<ControlsProps> = ({
       
       {/* Mobile Handle / Header */}
       <div className="flex md:hidden items-center justify-between mb-2">
-          <h3 className="font-semibold text-gray-800">Settings</h3>
+          <h3 className="font-semibold text-gray-800 text-lg">Settings</h3>
           <button 
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-gray-100 text-gray-500"
+            className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
           >
-              <ChevronDown size={24} />
+              <X size={24} />
           </button>
       </div>
 
