@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import SignaturePad, { SignaturePadHandle } from './components/SignaturePad';
 import Controls from './components/Controls';
 import { DrawingOptions, DrawingMode } from './types';
-import { Info, AlertCircle, Settings2 } from 'lucide-react';
+import { Info, Settings2 } from 'lucide-react';
 
 interface FontDef {
     name: string;
