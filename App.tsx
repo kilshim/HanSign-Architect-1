@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import SignaturePad, { SignaturePadHandle } from './components/SignaturePad';
 import Controls from './components/Controls';
 import { DrawingOptions, DrawingMode } from './types';
-import { Info, Settings2 } from 'lucide-react';
+import { Info, Settings2, Shuffle } from 'lucide-react';
 
 interface FontDef {
     name: string;
@@ -225,7 +225,7 @@ const App: React.FC = () => {
                                 value={textSignature}
                                 onChange={(e) => setTextSignature(e.target.value)}
                                 placeholder="Type Name"
-                                className="w-full max-w-2xl bg-transparent border-b-2 border-gray-200 text-center text-5xl md:text-7xl focus:border-brand-500 focus:outline-none placeholder-gray-300 transition-colors py-8 mb-4 relative z-10"
+                                className="w-full max-w-2xl bg-transparent border-b-2 border-gray-200 text-center text-5xl md:text-7xl focus:border-brand-500 focus:outline-none placeholder-gray-300 transition-colors py-8 relative z-10"
                                 style={{ 
                                     color: options.color,
                                     fontFamily: currentFont.family,
@@ -237,11 +237,18 @@ const App: React.FC = () => {
                             />
                         </div>
 
-                         <div className="text-gray-500 text-sm flex flex-col items-center gap-2 mt-4">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
-                                <Info size={14} />
-                                <span>Current Style: <strong>{currentFont.name}</strong></span>
-                            </div>
+                         {/* Quick Actions (Mobile Friendly) */}
+                         <button
+                            onClick={handleRegenerateStyle}
+                            className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-full shadow-lg shadow-brand-500/20 transition-all active:scale-95"
+                         >
+                            <Shuffle size={18} />
+                            <span className="font-medium">Next Style</span>
+                         </button>
+
+                         <div className="text-gray-400 text-xs flex items-center gap-1.5 mt-4 opacity-60">
+                            <Info size={12} />
+                            <span>{currentFont.name}</span>
                         </div>
                     </div>
                 )}
