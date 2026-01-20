@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import SignaturePad, { SignaturePadHandle } from './components/SignaturePad';
 import Controls from './components/Controls';
 import { DrawingOptions, DrawingMode } from './types';
-import { Info, Settings2, Shuffle } from 'lucide-react';
+import { Info, Settings2, ChevronLeft, ChevronRight, RotateCcw, Trash2, PenTool, Type, Play, Download } from 'lucide-react';
 
 interface FontDef {
     name: string;
@@ -99,8 +99,12 @@ const App: React.FC = () => {
     if (mode === 'draw') padRef.current?.replay();
   };
 
-  const handleRegenerateStyle = () => {
+  const handleNextStyle = () => {
     setCurrentFontIndex((prev) => (prev + 1) % availableFonts.length);
+  };
+
+  const handlePreviousStyle = () => {
+    setCurrentFontIndex((prev) => (prev - 1 + availableFonts.length) % availableFonts.length);
   };
 
   const handleDownload = () => {
@@ -199,16 +203,62 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col md:flex-row relative overflow-hidden">
         
         {/* Canvas Area - Always Visible */}
-        <div className="flex-1 relative bg-slate-100 flex items-center justify-center p-4 md:p-8 overflow-hidden">
+        <div className="flex-1 relative bg-slate-100 flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden">
             
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
                  style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
             </div>
 
-            <div className="relative w-full max-w-4xl h-[400px] md:h-[500px] bg-white rounded-xl shadow-2xl shadow-gray-200/50 overflow-hidden ring-1 ring-gray-200">
+            {/* Mobile Mode Switcher - Visible on screen above canvas */}
+            <div className="flex md:hidden items-center gap-3 mb-5 z-20">
+                <button
+                    onClick={() => setMode('draw')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
+                        mode === 'draw' 
+                        ? 'bg-brand-600 text-white shadow-brand-500/30 ring-2 ring-brand-100' 
+                        : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
+                    }`}
+                >
+                    <PenTool size={16} />
+                    Draw
+                </button>
+                <button
+                    onClick={() => setMode('type')}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
+                        mode === 'type' 
+                        ? 'bg-brand-600 text-white shadow-brand-500/30 ring-2 ring-brand-100' 
+                        : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
+                    }`}
+                >
+                    <Type size={16} />
+                    Type
+                </button>
+            </div>
+
+            <div className="relative w-full max-w-4xl h-[400px] md:h-[500px] bg-white rounded-xl shadow-2xl shadow-gray-200/50 overflow-hidden ring-1 ring-gray-200 z-10">
                 {mode === 'draw' ? (
                     <>
+                        {/* Quick Actions Overlay (Mobile/Tablet convenience) */}
+                        <div className="absolute top-4 left-4 z-10 flex gap-2">
+                            <button
+                                onClick={handleClear}
+                                className="p-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors active:scale-95"
+                                aria-label="Clear Canvas"
+                                title="Clear Canvas"
+                            >
+                                <Trash2 size={20} />
+                            </button>
+                            <button
+                                onClick={handleReplay}
+                                className="p-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm text-gray-500 hover:text-brand-600 hover:bg-brand-50 transition-colors active:scale-95"
+                                aria-label="Replay Drawing"
+                                title="Replay Drawing"
+                            >
+                                <Play size={20} />
+                            </button>
+                        </div>
+
                         <SignaturePad 
                             ref={padRef} 
                             options={options} 
@@ -238,13 +288,34 @@ const App: React.FC = () => {
                         </div>
 
                          {/* Quick Actions (Mobile Friendly) */}
-                         <button
-                            onClick={handleRegenerateStyle}
-                            className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-full shadow-lg shadow-brand-500/20 transition-all active:scale-95"
-                         >
-                            <Shuffle size={18} />
-                            <span className="font-medium">Next Style</span>
-                         </button>
+                         <div className="mt-8 flex items-center justify-center gap-6">
+                            <button
+                                onClick={handlePreviousStyle}
+                                className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-full shadow-sm hover:bg-gray-50 active:scale-95 transition-all"
+                                aria-label="Previous Style"
+                                title="Previous Style"
+                            >
+                                <ChevronLeft size={24} />
+                            </button>
+
+                            <button
+                                onClick={handleClear}
+                                className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-full shadow-sm hover:text-red-500 hover:bg-red-50 active:scale-95 transition-all"
+                                aria-label="Reset Text"
+                                title="Reset Text"
+                            >
+                                <RotateCcw size={22} />
+                            </button>
+
+                            <button
+                                onClick={handleNextStyle}
+                                className="w-12 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-600 rounded-full shadow-sm hover:bg-gray-50 active:scale-95 transition-all"
+                                aria-label="Next Style"
+                                title="Next Style"
+                            >
+                                <ChevronRight size={24} />
+                            </button>
+                         </div>
 
                          <div className="text-gray-400 text-xs flex items-center gap-1.5 mt-4 opacity-60">
                             <Info size={12} />
@@ -254,13 +325,22 @@ const App: React.FC = () => {
                 )}
             </div>
 
-            {/* Mobile Settings Toggle FAB - Moved to Top Right */}
+            {/* Mobile Download Button - Visible only on mobile below canvas */}
+            <button 
+                onClick={handleDownload}
+                className="md:hidden mt-6 flex items-center gap-2 px-8 py-3 bg-brand-600 text-white rounded-full shadow-lg shadow-brand-500/30 font-medium active:scale-95 transition-transform z-20 hover:bg-brand-700"
+            >
+                <Download size={20} />
+                Download Signature
+            </button>
+
+            {/* Mobile Settings Toggle FAB - Still needed for color/thickness, but less prominent now */}
             <button
                 onClick={() => setShowMobileControls(true)}
-                className="md:hidden absolute top-4 right-4 z-20 w-12 h-12 bg-white text-gray-700 rounded-full shadow-lg flex items-center justify-center border border-gray-200 active:scale-95 transition-transform hover:text-brand-600"
+                className="md:hidden absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 backdrop-blur text-gray-600 rounded-full shadow-sm flex items-center justify-center border border-gray-200 active:scale-95 transition-transform hover:text-brand-600"
                 aria-label="Open Settings"
             >
-                <Settings2 size={24} />
+                <Settings2 size={20} />
             </button>
         </div>
 
@@ -286,7 +366,7 @@ const App: React.FC = () => {
                 onClear={handleClear}
                 onReplay={handleReplay}
                 onDownload={handleDownload}
-                onRegenerateStyle={handleRegenerateStyle}
+                onRegenerateStyle={handleNextStyle}
                 currentFontName={currentFont.name}
                 mode={mode}
                 setMode={setMode}
