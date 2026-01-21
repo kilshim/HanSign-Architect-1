@@ -323,6 +323,18 @@ const App: React.FC = () => {
                         </div>
                     </div>
                 )}
+                
+                {/* Board Watermark / Branding */}
+                <div className="absolute bottom-3 right-5 pointer-events-auto opacity-50 hover:opacity-100 transition-opacity">
+                    <a 
+                        href="https://xn--design-hl6wo12cquiba7767a.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[10px] md:text-xs text-gray-400 hover:text-brand-600 font-sans tracking-wide"
+                    >
+                        떨림과울림Design.com
+                    </a>
+                </div>
             </div>
 
             {/* Mobile Download Button - Visible only on mobile below canvas */}
